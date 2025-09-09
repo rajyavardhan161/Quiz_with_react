@@ -46,12 +46,11 @@ export default function App() {
     },
   ];
 
-  const [remainingQuestions, setRemainingQuestions] = useState([...questionsData]); // questions left
+  const [remainingQuestions, setRemainingQuestions] = useState([...questionsData]);
   const [current, setCurrent] = useState(null);
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
 
-  // Pick random question from remaining questions
   const pickRandomQuestion = () => {
     if (remainingQuestions.length === 0) {
       setShowScore(true);
@@ -59,11 +58,9 @@ export default function App() {
     }
     const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
     setCurrent(remainingQuestions[randomIndex]);
-    // Remove picked question from remaining
     setRemainingQuestions(prev => prev.filter((_, idx) => idx !== randomIndex));
   };
 
-  // Auto move to next question every 5 seconds
   useEffect(() => {
     if (showScore) return;
     if (!current) pickRandomQuestion();
