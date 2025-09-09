@@ -19,17 +19,39 @@ export default function App() {
       question:
         "In Avengers: Endgame, who sacrificed themselves to obtain the Soul Stone?",
       options: [
-        { type: "image", value: "https://wallpapers.com/images/featured/iron-man-superhero-ponky3hlfivddo2m.jpg" },
-        { type: "image", value: "https://upload.wikimedia.org/wikipedia/en/f/f6/Scarlett_Johansson_as_Black_Widow.jpg" },
-        { type: "image", value: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVdjWQznlQxWZWAh3fZw6H7kya9AfkRn4Hvw&s" },
-        { type: "image", value: "https://mediaproxy.tvtropes.org/width/1200/https://static.tvtropes.org/pmwiki/pub/images/1f92373a_50d8_4800_8025_be7f2b840103.jpeg" }
+        {
+          type: "image",
+          value:
+            "https://wallpapers.com/images/featured/iron-man-superhero-ponky3hlfivddo2m.jpg",
+        },
+        {
+          type: "image",
+          value:
+            "https://upload.wikimedia.org/wikipedia/en/f/f6/Scarlett_Johansson_as_Black_Widow.jpg",
+        },
+        {
+          type: "image",
+          value:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVdjWQznlQxWZWAh3fZw6H7kya9AfkRn4Hvw&s",
+        },
+        {
+          type: "image",
+          value:
+            "https://mediaproxy.tvtropes.org/width/1200/https://static.tvtropes.org/pmwiki/pub/images/1f92373a_50d8_4800_8025_be7f2b840103.jpeg",
+        },
       ],
-      answer: "https://upload.wikimedia.org/wikipedia/en/f/f6/Scarlett_Johansson_as_Black_Widow.jpg",
+      answer:
+        "https://upload.wikimedia.org/wikipedia/en/f/f6/Scarlett_Johansson_as_Black_Widow.jpg",
     },
     {
       id: 4,
       question: "Who painted the famous artwork 'Mona Lisa'?",
-      options: ["Pablo Picasso", "Leonardo da Vinci", "Vincent van Gogh", "Michelangelo"],
+      options: [
+        "Pablo Picasso",
+        "Leonardo da Vinci",
+        "Vincent van Gogh",
+        "Michelangelo",
+      ],
       answer: "Leonardo da Vinci",
     },
     {
@@ -46,40 +68,43 @@ export default function App() {
     },
   ];
 
-  const [remainingQuestions, setRemainingQuestions] = useState([...questionsData]);
-  const [current, setCurrent] = useState(null);
+  const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
+  const [questions] = useState(() => shuffle(questionsData));
+
+  const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
 
-  const pickRandomQuestion = () => {
-    if (remainingQuestions.length === 0) {
-      setShowScore(true);
-      return;
-    }
-    const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
-    setCurrent(remainingQuestions[randomIndex]);
-    setRemainingQuestions(prev => prev.filter((_, idx) => idx !== randomIndex));
-  };
-
+  // Hidden timer: 5 seconds auto-advance
   useEffect(() => {
     if (showScore) return;
-    if (!current) pickRandomQuestion();
-    const timer = setTimeout(() => pickRandomQuestion(), 5000);
+    const timer = setTimeout(() => {
+      nextQuestion();
+    }, 5000);
     return () => clearTimeout(timer);
   }, [current, showScore]);
 
-  const handleAnswer = (option) => {
-    const chosen = typeof option === "object" ? option.value : option;
-    if (chosen === current.answer) setScore(score + 1);
-    pickRandomQuestion();
-  };
+  function handleAnswer(option) {
+    let chosen = option;
+    if (typeof option === "object") chosen = option.value;
 
-  const restartQuiz = () => {
-    setRemainingQuestions([...questionsData]);
+    if (chosen === questions[current].answer) {
+      setScore(score + 1);
+    }
+    nextQuestion();
+  }
+
+  function nextQuestion() {
+    const nextQ = current + 1;
+    if (nextQ < questions.length) setCurrent(nextQ);
+    else setShowScore(true);
+  }
+
+  function restartQuiz() {
+    setCurrent(0);
     setScore(0);
     setShowScore(false);
-    setCurrent(null);
-  };
+  }
 
   return (
     <div className="quiz-wrapper">
@@ -89,24 +114,39 @@ export default function App() {
         {showScore ? (
           <div className="score-box">
             <h2>Your Score:</h2>
-            <p className="score">{score} / {questionsData.length}</p>
+            <p className="score">
+              {score} / {questions.length}
+            </p>
             <button className="primary-btn" onClick={restartQuiz}>
               Play Again
             </button>
           </div>
         ) : (
-          current && (
-            <div>
-              <div className="question">{current.question}</div>
-              <div className="options-grid">
-                {current.options.map((opt, idx) => (
-                  <button key={idx} className="option-btn" onClick={() => handleAnswer(opt)}>
-                    {typeof opt === "object" ? <img src={opt.value} alt={`opt-${idx}`} className="option-img"/> : <span>{opt}</span>}
+          <div>
+            <div className="question">{questions[current].question}</div>
+            <div className="options-grid">
+              {questions[current].options.map((opt, idx) => {
+                const isImage = typeof opt === "object";
+                return (
+                  <button
+                    key={idx}
+                    className="option-btn"
+                    onClick={() => handleAnswer(opt)}
+                  >
+                    {isImage ? (
+                      <img
+                        src={opt.value}
+                        alt={`option-${idx}`}
+                        className="option-img"
+                      />
+                    ) : (
+                      <span>{opt}</span>
+                    )}
                   </button>
-                ))}
-              </div>
+                );
+              })}
             </div>
-          )
+          </div>
         )}
       </div>
     </div>
