@@ -48,12 +48,16 @@ export default function App() {
   const [questions] = useState(() => 
   [...questionsData].sort(() => Math.random() - 0.5));
 
+
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [pastScores, setPastScores] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [isAnswerChecked, setIsAnswerChecked] = useState(false);
 
   function nextQuestion() {
+    setIsAnswerChecked(false);
     if (current < questions.length - 1) setCurrent(current + 1);
     else setShowScore(true);
   }
@@ -67,8 +71,12 @@ export default function App() {
 
   function handleAnswer(option) {
     const chosen = typeof option === "object" ? option.value : option;
+    setSelectedOption(chosen);
+    setIsAnswerChecked(true);
+
     if (chosen === questions[current].answer) setScore(score + 1);
-    nextQuestion();
+
+    setTimeout(nextQuestion, 1000);
   }
 
   function restartQuiz() {
@@ -78,18 +86,17 @@ export default function App() {
   }
 
   useEffect(() => {
-  if (showScore) {
-    const today = new Date();
-    const date = today.toLocaleDateString("en-GB");
-    const newScore = {score: score,date: date};
+    if (showScore) {
+      const today = new Date();
+      const date = today.toLocaleDateString("en-GB");
+      const newScore = { score: score, date: date };
 
-    setPastScores(prevScores => [...prevScores, newScore]);
+      setPastScores(prevScores => [...prevScores, newScore]);
 
-    const storedScores = JSON.parse(localStorage.getItem("pastScores") || "[]");
-    localStorage.setItem("pastScores", JSON.stringify([...storedScores, newScore]));
-  }
-}, [showScore]);
-
+      const storedScores = JSON.parse(localStorage.getItem("pastScores") || "[]");
+      localStorage.setItem("pastScores", JSON.stringify([...storedScores, newScore]));
+    }
+  }, [showScore]);
 
   return (
     <div className="quiz-wrapper">
@@ -108,9 +115,22 @@ export default function App() {
             <div className="options-grid">
               {questions[current].options.map((opt, idx) => {
                 const isImage = typeof opt === "object";
+                const value = isImage ? opt.value : opt;
+
+                let className = "option-btn";
+                if (isAnswerChecked) {
+                  if (value === questions[current].answer) className += " correct";
+                  else if (value === selectedOption) className += " wrong";
+                }
+
                 return (
-                  <button key={idx} className="option-btn" onClick={() => handleAnswer(opt)}>
-                    {isImage ? <img src={opt.value} className="option-img"/> : <span>{opt}</span>}
+                  <button
+                    key={idx}
+                    className={className}
+                    onClick={() => handleAnswer(opt)}
+                  >
+                    {isImage ? <img src={opt.value} className="option-img"/> 
+                    : <span>{opt}</span>}
                   </button>
                 );
               })}
