@@ -12,6 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   padding: 40px 16px;
 }
 .quiz-card {
@@ -96,4 +97,33 @@
 }
 .primary-btn:hover {
   opacity: 0.95;
+}
+.past-scores-box {
+  width: 100%;
+  max-width: 720px;
+  background: #f0f8ff;
+  border-radius: 12px;
+  border: 2px solid #cbd5e1;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 20px;
+}
+.past-scores-box h2 {
+  text-align: center;
+  color: #0b3b66;
+  margin-bottom: 14px;
+  font-size: 20px;
+}
+.past-scores-box ul {
+  list-style: none;
+  padding: 0;
+}
+.past-scores-box li {
+  padding: 8px 6px;
+  font-size: 16px;
+  border-bottom: 1px solid #cbd5e1;
+  color: #0b2b45;
+}
+.past-scores-box li:last-child {
+  border-bottom: none;
 }
