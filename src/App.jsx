@@ -119,8 +119,8 @@ export default function App() {
 
                 let className = "option-btn";
                 if (isAnswerChecked) {
-                  if (value === questions[current].answer) className + " correct";
-                  else if (value === selectedOption) className + " wrong";
+                  if (value === questions[current].answer) className += " correct";
+                  else if (value === selectedOption) className += " wrong";
                 }
 
                 return (
