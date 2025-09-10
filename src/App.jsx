@@ -16,32 +16,26 @@ export default function App() {
     },
     {
       id: 3,
-      question:
-        "In Avengers: Endgame, who sacrificed themselves to obtain the Soul Stone?",
+      question:"In Avengers: Endgame, who sacrificed themselves to obtain the Soul Stone?",
       options: [
         {
           type: "image",
-          value:
-            "https://wallpapers.com/images/featured/iron-man-superhero-ponky3hlfivddo2m.jpg",
+          value:"https://wallpapers.com/images/featured/iron-man-superhero-ponky3hlfivddo2m.jpg",
         },
         {
           type: "image",
-          value:
-            "https://upload.wikimedia.org/wikipedia/en/f/f6/Scarlett_Johansson_as_Black_Widow.jpg",
+          value:"https://upload.wikimedia.org/wikipedia/en/f/f6/Scarlett_Johansson_as_Black_Widow.jpg",
         },
         {
           type: "image",
-          value:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVdjWQznlQxWZWAh3fZw6H7kya9AfkRn4Hvw&s",
+          value:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVdjWQznlQxWZWAh3fZw6H7kya9AfkRn4Hvw&s",
         },
         {
           type: "image",
-          value:
-            "https://mediaproxy.tvtropes.org/width/1200/https://static.tvtropes.org/pmwiki/pub/images/1f92373a_50d8_4800_8025_be7f2b840103.jpeg",
+          value:"https://mediaproxy.tvtropes.org/width/1200/https://static.tvtropes.org/pmwiki/pub/images/1f92373a_50d8_4800_8025_be7f2b840103.jpeg",
         },
       ],
-      answer:
-        "https://upload.wikimedia.org/wikipedia/en/f/f6/Scarlett_Johansson_as_Black_Widow.jpg",
+      answer:"https://upload.wikimedia.org/wikipedia/en/f/f6/Scarlett_Johansson_as_Black_Widow.jpg",
     },
     {
       id: 4,
@@ -76,7 +70,12 @@ export default function App() {
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
 
-  useEffect(() => {
+  function nextQuestion() {
+  if (current < questions.length - 1) setCurrent(current + 1);
+  else setShowScore(true);
+}
+
+useEffect(() => {
   if (!showScore) {
     const timer = setTimeout(nextQuestion, 5000);
     return () => clearTimeout(timer);
@@ -84,18 +83,11 @@ export default function App() {
 }, [current, showScore]);
 
 
-  function handleAnswer(option) {
+function handleAnswer(option) {
   const chosen = typeof option === "object" ? option.value : option;
   if (chosen === questions[current].answer) setScore(score + 1);
   nextQuestion();
 }
-
-
-  function nextQuestion() {
-  if (current < questions.length - 1) setCurrent(current + 1);
-  else setShowScore(true);
-}
-
 
   function restartQuiz() {
     setCurrent(0);
@@ -133,7 +125,6 @@ export default function App() {
                     {isImage ? (
                       <img
                         src={opt.value}
-                        alt={`option-${idx}`}
                         className="option-img"
                       />
                     ) : (
