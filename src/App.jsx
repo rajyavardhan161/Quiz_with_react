@@ -67,7 +67,7 @@ export default function App() {
       const timer = setTimeout(nextQuestion, 5000);
       return () => clearTimeout(timer);
     }
-  }, [current, showScore]);
+  }, [current, showScore,]);
 
   function handleAnswer(option) {
     const chosen = typeof option === "object" ? option.value : option;
@@ -119,15 +119,15 @@ export default function App() {
 
                 let className = "option-btn";
                 if (isAnswerChecked) {
-                  if (value === questions[current].answer) className += " correct";
-                  else if (value === selectedOption) className += " wrong";
+                  if (value === questions[current].answer) className + " correct";
+                  else if (value === selectedOption) className + " wrong";
                 }
 
                 return (
                   <button
                     key={idx}
                     className={className}
-                    onClick={() => handleAnswer(opt)}
+                    onClick={() =>!isAnswerChecked && handleAnswer(opt)}
                   >
                     {isImage ? <img src={opt.value} className="option-img"/> 
                     : <span>{opt}</span>}
