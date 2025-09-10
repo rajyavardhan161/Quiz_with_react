@@ -68,37 +68,34 @@ export default function App() {
     },
   ];
 
-  const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
-  const [questions] = useState(() => shuffle(questionsData));
+  const [questions] = useState(() => 
+  [...questionsData].sort(() => Math.random() - 0.5)
+);
 
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
 
-  // Hidden timer: 5 seconds auto-advance
   useEffect(() => {
-    if (showScore) return;
-    const timer = setTimeout(() => {
-      nextQuestion();
-    }, 5000);
+  if (!showScore) {
+    const timer = setTimeout(nextQuestion, 5000);
     return () => clearTimeout(timer);
-  }, [current, showScore]);
+  }
+}, [current, showScore]);
+
 
   function handleAnswer(option) {
-    let chosen = option;
-    if (typeof option === "object") chosen = option.value;
+  const chosen = typeof option === "object" ? option.value : option;
+  if (chosen === questions[current].answer) setScore(score + 1);
+  nextQuestion();
+}
 
-    if (chosen === questions[current].answer) {
-      setScore(score + 1);
-    }
-    nextQuestion();
-  }
 
   function nextQuestion() {
-    const nextQ = current + 1;
-    if (nextQ < questions.length) setCurrent(nextQ);
-    else setShowScore(true);
-  }
+  if (current < questions.length - 1) setCurrent(current + 1);
+  else setShowScore(true);
+}
+
 
   function restartQuiz() {
     setCurrent(0);
